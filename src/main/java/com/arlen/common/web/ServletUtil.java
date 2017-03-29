@@ -18,7 +18,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -34,7 +37,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ServletUtil {
 
 	public final static String ENCODING = "UTF-8";
+	
+	private final static ObjectMapper objectMapper;
 
+	static {
+		objectMapper = new ObjectMapper();
+		objectMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+		objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		objectMapper.configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
+	}
+	
 	/**
 	 * 将json字符串转换为Map
 	 * @param jsonParam
@@ -50,7 +63,6 @@ public class ServletUtil {
 		}
 		
 		Map<String, String> paramMap = new HashMap<String, String>();
-		ObjectMapper objectMapper = new ObjectMapper();
 		JsonNode jsonNode = objectMapper.readTree(jsonParam);
 		Iterator<String> fieldIt = jsonNode.fieldNames();
 		while (fieldIt.hasNext()) {

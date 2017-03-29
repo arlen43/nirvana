@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.arlen.common.sequence.dao.IBaseSequenceDao">
+  <resultMap id="BaseResultMap" type="com.arlen.common.sequence.BaseSequence">
+    <id column="t_seq_key" jdbcType="TINYINT" property="seqKey" />
+    <result column="t_start_id" jdbcType="INTEGER" property="startId" />
+    <result column="t_step_by" jdbcType="INTEGER" property="stepBy" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    t.seq_key as t_seq_key, t.start_id as t_start_id, t.step_by as t_step_by
+  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Byte" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from prd_base_sequence t
+    where t.seq_key = #{seqKey,jdbcType=TINYINT}
+  </select>
+  
+  <insert id="insert" parameterType="com.arlen.common.sequence.BaseSequence">
+    insert into prd_base_sequence (seq_key, start_id, step_by
+      )
+    values (#{seqKey,jdbcType=TINYINT}, #{startId,jdbcType=INTEGER}, #{stepBy,jdbcType=INTEGER}
+      )
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.arlen.common.sequence.BaseSequence">
+    update prd_base_sequence
+    <set>
+      <if test="startId != null">
+        start_id = #{startId,jdbcType=INTEGER},
+      </if>
+      <if test="stepBy != null">
+        step_by = #{stepBy,jdbcType=INTEGER},
+      </if>
+    </set>
+    where seq_key = #{seqKey,jdbcType=TINYINT}
+  </update>
+  
+</mapper>
