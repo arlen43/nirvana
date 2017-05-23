@@ -24,7 +24,7 @@ public class CriteriaFilter {
 	/**
 	 * 多个条件的组合方式：AND OR
 	 */
-	@Length(value=3, name="查询组合方式", options="and,or")
+	@Length(value=3, name="查询组合方式", options="and,or,AND,OR")
 	private String groupOper;
 	/**
 	 * 查询条件

@@ -167,9 +167,11 @@ public class VerifyUtils {
 							Object child = it.next();
 							if (null == child)
 								continue;
-							result = validate(child);
-							if (!result.isSuccess()) {
-								return result;
+							if (!TypeUtil.isInstanceOfBaseType(child.getClass())) {
+								result = validate(child);
+								if (!result.isSuccess()) {
+									return result;
+								}
 							}
 						}
 					} else {

@@ -7,7 +7,7 @@
  */
 package com.arlen.common.web.argument;
 
-import java.io.DataInput;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Map;
 
@@ -51,7 +51,9 @@ public class RequestJsonArgumentResolver implements HandlerMethodArgumentResolve
 		this.objectMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
 		this.objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
 		this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		this.objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
 		this.objectMapper.configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
+		this.objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 	}
 
 	@Override
@@ -75,16 +77,21 @@ public class RequestJsonArgumentResolver implements HandlerMethodArgumentResolve
 			// 未指定路径
 			if (StringUtils.isEmpty(path)) {
 				logger.debug("Resolve argument {}, index {}", parameter.getParameterType().toString(), Integer.valueOf(parameter.getParameterIndex()));
-
-				path = parameter.getParameterName();
-				if (node.has(path)) {
-					return this.objectMapper.readValue((DataInput) node.path(path), getReferenceType(parameter, jsonAnn));
+				// 按变量名找到路径，按路径值转换
+				try {
+					path = parameter.getParameterName();
+					if (node.has(path)) {
+						return this.objectMapper.readValue(node.path(path).toString(), getReferenceType(parameter, jsonAnn));
+					}
+				} catch (Exception e) {
+					logger.warn("Just a warn: Resolve path argument failed. Type "+parameter.getParameterType().toString()+", index "+Integer.valueOf(parameter.getParameterIndex()), e);
 				}
+				// 如果失败，则全部参数转换
 				try {
 					return this.objectMapper.readValue(allParam, getReferenceType(parameter, jsonAnn));
 				} catch (Exception e) {
 					logger.error("Resolve argument failed. Type "+parameter.getParameterType().toString()+", index "+Integer.valueOf(parameter.getParameterIndex()), e);
-					return null;
+					throw e;
 				}
 			}
 
@@ -97,7 +104,7 @@ public class RequestJsonArgumentResolver implements HandlerMethodArgumentResolve
 				logger.error("Resolve argument failed. Path {} dose not exist.", this.objectMapper.writeValueAsString(pathArr));
 				return null;
 			}
-			return this.objectMapper.readValue((DataInput) node, getReferenceType(parameter, jsonAnn));
+			return this.objectMapper.readValue(node.toString(), getReferenceType(parameter, jsonAnn));
 		} catch (Exception e) {
 			logger.error("Resolve argument "+parameter.getParameterName()+" failed!", e);
 			throw e;

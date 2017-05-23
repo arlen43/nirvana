@@ -42,6 +42,10 @@ public class Paging implements Serializable {
 	 * 数据
 	 */
 	private List<?> records;
+	/**
+	 * 出错数据
+	 */
+	private String errMsg;
 	
 	public Paging() {
 		
@@ -141,6 +145,14 @@ public class Paging implements Serializable {
 
 	public void setRecords(List<?> records) {
 		this.records = records;
+	}
+
+	public String getErrMsg() {
+		return errMsg;
+	}
+
+	public void setErrMsg(String errMsg) {
+		this.errMsg = errMsg;
 	}
 
 }

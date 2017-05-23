@@ -21,6 +21,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.springframework.util.StringUtils;
@@ -36,6 +38,7 @@ import org.springframework.util.StringUtils;
  */
 public class JsonParamCrosFilter implements Filter {
 
+	private final static Logger logger = LoggerFactory.getLogger(JsonParamCrosFilter.class);
 	private static final String CONFIG_LOCATION_DELIMITERS = ",; \t\n";
 	private PathMatcher matcher = new AntPathMatcher();
 	private List<String> crosDomainList = new ArrayList<>();
@@ -70,7 +73,7 @@ public class JsonParamCrosFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest)req;
 		HttpServletResponse response = (HttpServletResponse)resp;
 		setCrosHttpResponse(request, response);
-		if (isInExclude(request.getServletPath())) {
+		if (isInExclude(request)) {
 			chain.doFilter(request, response);
 		} else {
 			JsonHttpServletRequestWrapper DecodingRequest = new JsonHttpServletRequestWrapper(request, base64);
@@ -92,6 +95,7 @@ public class JsonParamCrosFilter implements Filter {
 		// 复杂请求
 		response.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
 		response.setHeader("Access-Control-Allow-Headers", "X-Requested-With, Authorization, Content-Type");
+		response.setHeader("Access-Control-Allow-Credentials","true");
 		// 请求头为application/json
 		response.setHeader("Content-Type", "application/json;charset=UTF-8");
 	}
@@ -100,12 +104,15 @@ public class JsonParamCrosFilter implements Filter {
 	public void destroy() {
 	}
 
-	private boolean isInExclude(String servletPath) {
-		if (this.excludeList.contains(servletPath)) {
+	private boolean isInExclude(HttpServletRequest request) {
+		String path = StringUtils.isEmpty(request.getServletPath())? request.getRequestURI(): request.getServletPath();
+		if (this.excludeList.contains(path)) {
+			logger.info("JsonCros filter: path {} is in exclude urls.", path);
 			return true;
 		}
 		for (String excludePatten : this.excludeList) {
-			if (this.matcher.match(excludePatten, servletPath)) {
+			if (this.matcher.match(excludePatten, path)) {
+				logger.info("JsonCros filter: path {} is in exclude urls.", path);
 				return true;
 			}
 		}

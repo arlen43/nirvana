@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:task="http://www.springframework.org/schema/task"
+    xsi:schemaLocation="
+	    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd 
+	    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd 
+	    http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+	    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd 
+    ">
+	
+	<!-- 隐式地向 Spring 容器注册 -->
+	<context:annotation-config />
+
+	<!-- 定时器开关 开始 -->
+	<task:annotation-driven />
+	
+	<!-- 统一异常处理方式 -->
+	<!-- <bean id="exceptionHandler" class="com.hongkun.common.exception.MyExceptionHandler"/> -->
+	
+    <!-- @Service,@Repository -->
+    <context:component-scan base-package="com.arlen.test" />
+    
+    <!-- spring 加载数据列表 -->
+	<bean id="configProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations">
+            <list>
+                <value>classpath*:config/resource/config.properties</value>
+            </list>
+        </property>
+    </bean>
+    
+</beans>
