@@ -51,3 +51,6 @@ target/
 .texlipse
 
 # ~~~ elipse end ~~~
+#
+# --- idea ---
+.idea
