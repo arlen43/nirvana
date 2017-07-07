@@ -71,4 +71,11 @@ public class BusinessContext {
         }
         return null;
     }
+
+    /**
+     * 清除变量，在线程池的情况下防止内存溢出
+     */
+	public static void clear() {
+		BIZ_MAP.remove();
+	}
 }

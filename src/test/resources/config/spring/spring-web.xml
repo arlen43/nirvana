@@ -21,7 +21,7 @@
 	<!-- <bean id="exceptionHandler" class="com.hongkun.common.exception.MyExceptionHandler"/> -->
 	
     <!-- @Service,@Repository -->
-    <context:component-scan base-package="com.arlen.test" />
+    <context:component-scan base-package="com.arlen.test.redis" />
     
     <!-- spring 加载数据列表 -->
 	<bean id="configProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">

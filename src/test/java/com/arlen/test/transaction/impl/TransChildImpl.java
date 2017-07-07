@@ -2,6 +2,7 @@ package com.arlen.test.transaction.impl;
 
 import javax.annotation.Resource;
 
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,12 @@ public class TransChildImpl implements ITransChild {
 		int row = sequenceDao.updateByPrimaryKeySelective(sequenceUpd);
 		System.err.println("子事务修改后，orderStatus："+sequenceUpd.getStartId());
 		System.out.println(row);
+	}
+	
+	public void sss() {
+		SqlSessionTemplate template = null;
+//		template.begin();
+		template.rollback();
 	}
 	
 }
