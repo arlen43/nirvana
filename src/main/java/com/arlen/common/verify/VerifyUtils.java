@@ -69,7 +69,10 @@ public class VerifyUtils {
 		
 		List<Field> fieldList = new ArrayList<Field>();
 		Class<?> clazz = data.getClass(), superClazz = clazz;
-		do {
+        if (Enum.class.isAssignableFrom(clazz)) {
+            return new VerifyResult("枚举类型跳过", "", true);
+        }
+        do {
 			fieldList.addAll(Arrays.asList(superClazz.getDeclaredFields()));
 		} while (null != (superClazz = superClazz.getSuperclass()));
 

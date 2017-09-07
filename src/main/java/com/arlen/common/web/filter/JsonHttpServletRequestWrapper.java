@@ -20,6 +20,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import com.arlen.common.web.ServletUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 /** 
  * 项目名称：nirvana <br>
@@ -32,6 +35,8 @@ import com.arlen.common.web.ServletUtil;
  */
 public class JsonHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
+
+	private final static Logger logger = LoggerFactory.getLogger(JsonHttpServletRequestWrapper.class);
 	private Map<String, String> paramMap;
 	private boolean base64 = false;
 	private byte[] bytes = new byte[0];
@@ -53,7 +58,8 @@ public class JsonHttpServletRequestWrapper extends HttpServletRequestWrapper {
 				this.bytes = ServletUtil.getHttpInputStreamBytesBase64Decode(this.getHttpServletRequest(), this.base64);
 				jsonParam = new String(this.bytes, ServletUtil.ENCODING);
 			}
-			
+			String path = StringUtils.isEmpty(request.getServletPath())? request.getRequestURI(): request.getServletPath();
+			logger.info("Request path: "+ path + ", param: " + jsonParam);
 			this.paramMap = ServletUtil.convertJson2FieldMap(jsonParam);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
