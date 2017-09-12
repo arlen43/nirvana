@@ -15,7 +15,7 @@
     select 
     <include refid="Base_Column_List" />
     from prd_base_sequence t
-    where t.seq_key = #{seqKey,jdbcType=TINYINT}
+    where t.seq_key = #{seqKey,jdbcType=TINYINT} FOR UPDATE;
   </select>
   
   <insert id="insert" parameterType="com.arlen.common.sequence.BaseSequence">
